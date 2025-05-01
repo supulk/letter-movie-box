@@ -13,6 +13,16 @@
         android:theme="@style/Theme.Lettermoviebox"
         tools:targetApi="31">
         <activity
+            android:name=".SearchActor"
+            android:exported="false"
+            android:label="@string/title_activity_search_actor"
+            android:theme="@style/Theme.Lettermoviebox" />
+        <activity
+            android:name=".SearchMovie"
+            android:exported="false"
+            android:label="@string/title_activity_search_movie"
+            android:theme="@style/Theme.Lettermoviebox" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

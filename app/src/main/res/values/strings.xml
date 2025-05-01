@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">letter-movie-box</string>
+    <string name="title_activity_search_movie">SearchMovie</string>
+    <string name="title_activity_search_actor">SearchActor</string>
 </resources>

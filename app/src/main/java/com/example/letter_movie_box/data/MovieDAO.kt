@@ -1,4 +1,4 @@
-package com.example.letter_movie_box
+package com.example.letter_movie_box.data
 
 import androidx.room.Dao
 import androidx.room.Query

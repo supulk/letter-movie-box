@@ -1,4 +1,4 @@
-package com.example.letter_movie_box
+package com.example.letter_movie_box.data
 
 import android.content.Context
 import androidx.room.Database
@@ -10,12 +10,12 @@ import androidx.room.RoomDatabase
     version = 1
 )
 abstract class MovieDatabase : RoomDatabase(){
-    abstract val dao:MovieDAO
+    abstract val dao: MovieDAO
 
     companion object{
         @Volatile
-        var INSTANCE:MovieDatabase? = null
-        fun getDatabase(context: Context):MovieDatabase{
+        var INSTANCE: MovieDatabase? = null
+        fun getDatabase(context: Context): MovieDatabase {
             return INSTANCE ?: synchronized(this){
                 val instance = Room.databaseBuilder(
                     context,

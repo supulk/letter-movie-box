@@ -1,4 +1,4 @@
-package com.example.letter_movie_box
+package com.example.letter_movie_box.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
