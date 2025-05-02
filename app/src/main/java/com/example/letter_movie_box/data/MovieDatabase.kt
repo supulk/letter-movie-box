@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase
     version = 1
 )
 abstract class MovieDatabase : RoomDatabase(){
-    abstract val dao: MovieDAO
+    abstract fun dao(): MovieDAO
 
     companion object{
         @Volatile
