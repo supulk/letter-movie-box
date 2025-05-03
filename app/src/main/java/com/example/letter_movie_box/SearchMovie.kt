@@ -62,7 +62,6 @@ fun MovieSearchWindow(viewModel: MainViewModel){
     var keyword by rememberSaveable { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
     var movie: Movie? by rememberSaveable { mutableStateOf(null) }
-    var matchFound by rememberSaveable { mutableStateOf(movie==null) }
 
     Column(
         modifier = Modifier
@@ -128,7 +127,7 @@ fun MovieSearchWindow(viewModel: MainViewModel){
                 )
                 .size(width = 350.dp, height = 470.dp)
             ) {
-                if (matchFound) {
+                if (movie!=null) {
                     Text(
                         modifier = Modifier.padding(10.dp),
                         fontSize = 20.sp,
@@ -172,6 +171,8 @@ fun MovieSearchWindow(viewModel: MainViewModel){
                     movie?.let {
                         coroutineScope.launch {
                             viewModel.addtoDb(it)
+                            Toast.makeText(context, "Movie Added", Toast.LENGTH_SHORT).show()
+                            movie = null
                         }
                     }
                 }, enabled = (movie != null)
