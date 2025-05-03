@@ -2,25 +2,35 @@ package com.example.letter_movie_box
 
 import android.app.Application
 import android.content.Intent
+import android.graphics.drawable.shapes.Shape
 import android.health.connect.datatypes.units.Length
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.AndroidViewModel
 import androidx.room.Room
 import com.example.letter_movie_box.data.Movie
@@ -29,9 +39,6 @@ import com.example.letter_movie_box.data.MovieDatabase
 import com.example.letter_movie_box.ui.theme.LettermovieboxTheme
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-
-lateinit var db: MovieDatabase
-lateinit var movieDao: MovieDAO
 
 class MainActivity : ComponentActivity() {
     private lateinit var viewModel: MainViewModel
@@ -49,30 +56,73 @@ fun MainWindow(viewModel: MainViewModel) {
     val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(color = Color(0xFF35637A)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         val context = LocalContext.current;
-        Button(onClick = {
+        Button(modifier = Modifier
+            .size(220.dp, 40.dp),
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFFFAB56),
+                contentColor = Color.Black,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.LightGray
+            ),
+            onClick = {
             coroutineScope.launch {
                 addMoviesTODb(viewModel)
                 Toast.makeText(context, "Movies Added", Toast.LENGTH_SHORT).show()
             }
         }){
-            Text("Add to DB")
+            Text(
+                text = "Add to DB",
+                fontSize = 17.sp
+            )
         }
-        Button(onClick = {
+
+        Spacer(Modifier.size(10.dp))
+
+        Button(modifier = Modifier
+            .size(220.dp, 40.dp),
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFFFAB56),
+                contentColor = Color.Black,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.LightGray
+            ),
+            onClick = {
             val intent = Intent(context, SearchMovie::class.java)
             context.startActivity(intent)
         }) {
-            Text("Search for a movie")
+            Text(
+                text = "Search for a movie",
+                fontSize = 17.sp
+            )
         }
-        Button(onClick = {
+
+        Spacer(Modifier.size(10.dp))
+
+        Button(modifier = Modifier
+            .size(220.dp, 40.dp),
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFFFAB56),
+                contentColor = Color.Black,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.LightGray
+            ),
+            onClick = {
             val intent = Intent(context, SearchActor::class.java)
             context.startActivity(intent)
         }) {
-            Text("Search for actors")
+            Text(
+                text = "Search for actors",
+                fontSize = 17.sp
+            )
         }
     }
 }

@@ -12,5 +12,5 @@ interface MovieDAO {
     suspend fun upsertMovie(movie: Movie)
 
     @Query("SELECT * FROM movies WHERE actors LIKE '%'||:actorName||'%'")
-    fun getMoviesByActor(actorName: String):Flow<List<Movie>>
+    fun getMoviesByActor(actorName: String):List<Movie>
 }

@@ -21,7 +21,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         repository.addMovie(movie)
     }
 
-    suspend fun searchActor(actorName:String): Flow<List<Movie>>{
+    suspend fun searchActor(actorName:String): List<Movie>{
         return repository.getMoviesByActor(actorName)
     }
 }

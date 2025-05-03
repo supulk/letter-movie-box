@@ -8,7 +8,7 @@ class MovieRepository(private val movieDao: MovieDAO) {
         movieDao.upsertMovie(movie)
     }
 
-    fun getMoviesByActor(name:String):Flow<List<Movie>>{
+    fun getMoviesByActor(name:String):List<Movie>{
         return movieDao.getMoviesByActor(name)
     }
 }
