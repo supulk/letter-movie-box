@@ -112,31 +112,7 @@ fun ActorSearchWindow(viewModel: MainViewModel){
 
         if(movies.isNotEmpty()){
             movies.forEach { movie: Movie ->
-                Box(modifier = Modifier
-                    .padding(16.dp)
-                    .background(
-                        color = Color(0xFFFFF5EB),
-                        shape = RoundedCornerShape(10.dp)
-                    )
-                    .size(width = 350.dp, height = 470.dp)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(10.dp),
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        text = "IMDB : ${movie?.imdbId} \n" +
-                                "Title : ${movie?.title} \n" +
-                                "Year : ${movie?.year} \n" +
-                                "Rated : ${movie?.rated} \n" +
-                                "Released : ${movie?.released} \n" +
-                                "Runtime : ${movie?.runtime} \n" +
-                                "Genre : ${movie?.genre} \n" +
-                                "Director : ${movie?.director} \n" +
-                                "Writer : ${movie?.writer} \n" +
-                                "Actors : ${movie?.actors} \n" +
-                                "Plot : ${movie?.plot} \n"
-                    )
-                }
+                viewModel.MovieCard(movie)
             }
         }
 

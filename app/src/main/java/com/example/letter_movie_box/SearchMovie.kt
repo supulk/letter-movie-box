@@ -56,6 +56,9 @@ class SearchMovie : ComponentActivity() {
     }
 }
 
+
+
+
 @Composable
 fun MovieSearchWindow(viewModel: MainViewModel){
     val context = LocalContext.current
@@ -107,10 +110,12 @@ fun MovieSearchWindow(viewModel: MainViewModel){
                     if (keyword != "") {
                         coroutineScope.launch {
                             //Toast.makeText(context, "Searching", Toast.LENGTH_SHORT).show()
-                            movie = fetchMovie(context, keyword)
+                            movie = viewModel.fetchMovie(context, keyword)
                             //Toast.makeText(context, "Got ${movie?.title}", Toast.LENGTH_SHORT).show()
                             keyword = ""
                         }
+                    }else{
+                        Toast.makeText(context, "Value is Required", Toast.LENGTH_SHORT).show()
                     }
                 }
             )
@@ -119,32 +124,17 @@ fun MovieSearchWindow(viewModel: MainViewModel){
             }
 
 
-            Box(modifier = Modifier
-                .padding(16.dp)
-                .background(
-                    color = Color(0xFFFFF5EB),
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .size(width = 350.dp, height = 470.dp)
-            ) {
-                if (movie!=null) {
-                    Text(
-                        modifier = Modifier.padding(10.dp),
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        text = "IMDB : ${movie?.imdbId} \n" +
-                                "Title : ${movie?.title} \n" +
-                                "Year : ${movie?.year} \n" +
-                                "Rated : ${movie?.rated} \n" +
-                                "Released : ${movie?.released} \n" +
-                                "Runtime : ${movie?.runtime} \n" +
-                                "Genre : ${movie?.genre} \n" +
-                                "Director : ${movie?.director} \n" +
-                                "Writer : ${movie?.writer} \n" +
-                                "Actors : ${movie?.actors} \n" +
-                                "Plot : ${movie?.plot} \n"
+            if (movie!=null){
+                viewModel.MovieCard(movie!!)
+            }else{
+                Box(modifier = Modifier
+                    .padding(16.dp)
+                    .background(
+                        color = Color(0xFFFFF5EB),
+                        shape = RoundedCornerShape(10.dp)
                     )
-                }
+                    .size(width = 350.dp, height = 470.dp)
+                ) {}
             }
         }
 
@@ -175,7 +165,8 @@ fun MovieSearchWindow(viewModel: MainViewModel){
                             movie = null
                         }
                     }
-                }, enabled = (movie != null)
+                },
+                enabled = (movie != null)
             ) {
                 Text("Add this movie")
             }
@@ -183,52 +174,4 @@ fun MovieSearchWindow(viewModel: MainViewModel){
     }
 }
 
-suspend fun fetchMovie(context: Context, keyword:String): Movie? {
-    lateinit var fetchedMovie:Movie
-    val encodedKeyword = withContext(Dispatchers.IO) {
-        URLEncoder.encode(keyword, "UTF-8")
-    }
-    val urlString = "https://www.omdbapi.com/?t=$encodedKeyword&apikey=38b008c3"
-    val url = URL(urlString)
-    val con: HttpURLConnection = withContext(Dispatchers.IO) {
-        url.openConnection()
-    } as HttpURLConnection
 
-    var stb = StringBuilder()
-
-    withContext(Dispatchers.IO){
-        var bf = BufferedReader(InputStreamReader(con.inputStream))
-        var line: String? = bf.readLine()
-        while (line != null){
-            stb.append(line + "\n")
-            line = bf.readLine()
-        }
-    }
-    val stbToJson = JSONObject(stb.toString())
-    if (stbToJson.getString("Response").equals("True")){
-        fetchedMovie = parseToMovie(stbToJson)
-
-        return fetchedMovie
-    }else{
-        Toast.makeText(context, "Zero Matches found", Toast.LENGTH_SHORT).show()
-    }
-    //Toast.makeText(context, "Got ${fetchedMovie.title}", Toast.LENGTH_SHORT).show()
-    return null
-}
-
-fun parseToMovie(jsonObject: JSONObject) : Movie{
-
-    return Movie(
-        imdbId = jsonObject.getString("imdbID"),
-        title = jsonObject.getString("Title"),
-        year = jsonObject.getString("Year"),
-        rated = jsonObject.getString("Rated"),
-        released = jsonObject.getString("Released"),
-        runtime = jsonObject.getString("Runtime"),
-        genre = jsonObject.getString("Genre"),
-        director = jsonObject.getString("Director"),
-        writer = jsonObject.getString("Writer"),
-        actors = jsonObject.getString("Actors"),
-        plot = jsonObject.getString("Plot")
-    )
-}
