@@ -79,9 +79,10 @@ fun MainWindow(viewModel: MainViewModel) {
             .background(color = Color(0xFF35637A))
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
-        val context = LocalContext.current;
+        Spacer(Modifier.size(120.dp))
+
         Button(modifier = Modifier
             .size(220.dp, 40.dp),
             shape = RoundedCornerShape(10.dp),
