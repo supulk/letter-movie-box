@@ -97,7 +97,59 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         )
     }
 
+    suspend fun fetchMatchingMovies(context: Context, keyword:String): String {
+        val moviesList = ArrayList<Movie>()
+        val encodedKeyword = withContext(Dispatchers.IO) {
+            URLEncoder.encode(keyword, "UTF-8")
+        }
+        val urlString = "https://www.omdbapi.com/?s=$encodedKeyword&apikey=38b008c3"
+        val url = URL(urlString)
+        val con: HttpURLConnection = withContext(Dispatchers.IO) {
+            url.openConnection()
+        } as HttpURLConnection
 
+        val stb = StringBuilder()
+
+        withContext(Dispatchers.IO){
+            val bf = BufferedReader(InputStreamReader(con.inputStream))
+            var line: String? = bf.readLine()
+            while (line != null){
+                stb.append(line + "\n")
+                line = bf.readLine()
+            }
+        }
+
+        val stbToJson = JSONObject(stb.toString())
+        if (stbToJson.getString("Response").equals("True")){
+            val searchArray = stbToJson.getJSONArray("Search")
+            for (i in 0 until searchArray.length()) {
+                val movieJson = searchArray.getJSONObject(i)
+                val movie = Movie(
+                    imdbId = movieJson.getString("imdbID"),
+                    title = movieJson.getString("Title"),
+                    year = movieJson.getString("Year"),
+                    rated = "",
+                    released = "",
+                    runtime = "",
+                    genre = "",
+                    director = "",
+                    writer = "",
+                    actors = "",
+                    plot = ""
+                )
+                moviesList.add(movie)
+            }
+            var returnString = ""
+            moviesList.forEach { movie ->
+                returnString += movie.title+" ("+movie.year+") "+"\n"
+            }
+            return returnString
+
+        }else{
+            return ""
+            //Toast.makeText(context, "Zero Matches found", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 
     @Composable
