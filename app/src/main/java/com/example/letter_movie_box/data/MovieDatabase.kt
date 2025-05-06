@@ -12,11 +12,11 @@ import androidx.room.RoomDatabase
 abstract class MovieDatabase : RoomDatabase(){
     abstract fun dao(): MovieDAO
 
-    companion object{
+    companion object{ //similar to a java static property
         @Volatile
         var INSTANCE: MovieDatabase? = null
-        fun getDatabase(context: Context): MovieDatabase {
-            return INSTANCE ?: synchronized(this){
+        fun getDatabase(context: Context): MovieDatabase { //returns a the database if not empty
+            return INSTANCE ?: synchronized(this){  //if empty, create a new one
                 val instance = Room.databaseBuilder(
                     context,
                     MovieDatabase::class.java,

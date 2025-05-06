@@ -1,14 +1,11 @@
 package com.example.letter_movie_box
 
-import android.app.Application
+import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.shapes.Shape
-import android.health.connect.datatypes.units.Length
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,10 +21,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,28 +32,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.AndroidViewModel
-import androidx.room.Room
 import com.example.letter_movie_box.data.Movie
 import com.example.letter_movie_box.data.MovieDAO
-import com.example.letter_movie_box.data.MovieDatabase
-import com.example.letter_movie_box.ui.theme.LettermovieboxTheme
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     private lateinit var viewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = MainViewModel(application)
+        var dao : MovieDAO
         setContent {
             MainWindow(viewModel)
         }
@@ -69,9 +56,9 @@ class MainActivity : ComponentActivity() {
 fun MainWindow(viewModel: MainViewModel) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var browseKeyword by rememberSaveable { mutableStateOf("") }
-    var browseResults by rememberSaveable { mutableStateOf("") }
-    var isBrowseOn by rememberSaveable { mutableStateOf(false) }
+    var browseKeyword by rememberSaveable { mutableStateOf("") } //collect textfield input
+    var browseResults by rememberSaveable { mutableStateOf("") } //collect result from viemodel
+    var isBrowseOn by rememberSaveable { mutableStateOf(false) } //boolean to decide textfield visibility
 
     Column(
         modifier = Modifier
@@ -83,7 +70,7 @@ fun MainWindow(viewModel: MainViewModel) {
     ) {
         Spacer(Modifier.size(120.dp))
 
-        Button(modifier = Modifier
+        Button(modifier = Modifier  //add to db btn
             .size(220.dp, 40.dp),
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(
@@ -106,7 +93,7 @@ fun MainWindow(viewModel: MainViewModel) {
 
         Spacer(Modifier.size(10.dp))
 
-        Button(modifier = Modifier
+        Button(modifier = Modifier  //search film btn
             .size(220.dp, 40.dp),
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(
@@ -127,7 +114,7 @@ fun MainWindow(viewModel: MainViewModel) {
 
         Spacer(Modifier.size(10.dp))
 
-        Button(modifier = Modifier
+        Button(modifier = Modifier //search actor btn
             .size(220.dp, 40.dp),
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(
@@ -148,7 +135,7 @@ fun MainWindow(viewModel: MainViewModel) {
 
         Spacer(Modifier.size(10.dp))
 
-        Button(modifier = Modifier
+        Button(modifier = Modifier //browse film btn
             .size(220.dp, 40.dp),
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(
@@ -171,11 +158,11 @@ fun MainWindow(viewModel: MainViewModel) {
         Spacer(Modifier.size(10.dp))
 
         if (isBrowseOn){
-            TextField(
+            TextField( //browse movies textfield, toggled by browse btn
                 modifier = Modifier.size(220.dp, 50.dp),
                 value = browseKeyword,
                 onValueChange = {newKeyword ->
-                    browseKeyword = newKeyword
+                    browseKeyword = newKeyword //constantly getting results from api when input changes and assign them to a variable
                     if (newKeyword.isNotEmpty()){
                         coroutineScope.launch {
                             val result = viewModel.fetchMatchingMovies(context, newKeyword)
@@ -189,7 +176,7 @@ fun MainWindow(viewModel: MainViewModel) {
                 shape = RoundedCornerShape(10.dp),
             )
 
-            if (browseResults != ""){
+            if (browseResults != ""){ //show the results if not empty
                 Box(modifier = Modifier
                     .padding(16.dp)
                     .background(
@@ -208,7 +195,6 @@ fun MainWindow(viewModel: MainViewModel) {
         }
     }
 }
-
 
 
 suspend fun addMoviesTODb(viewModel: MainViewModel){

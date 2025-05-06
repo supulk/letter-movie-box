@@ -62,9 +62,9 @@ class SearchMovie : ComponentActivity() {
 @Composable
 fun MovieSearchWindow(viewModel: MainViewModel){
     val context = LocalContext.current
-    var keyword by rememberSaveable { mutableStateOf("") }
+    var keyword by rememberSaveable { mutableStateOf("") } //store search keyword
     val coroutineScope = rememberCoroutineScope()
-    var movie: Movie? by rememberSaveable { mutableStateOf(null) }
+    var movie: Movie? by rememberSaveable { mutableStateOf(null) } //store result
 
     Column(
         modifier = Modifier
@@ -82,9 +82,9 @@ fun MovieSearchWindow(viewModel: MainViewModel){
         ) {
             Spacer(Modifier.size(120.dp))
 
-            TextField(
+            TextField( //search textfield
                 value = keyword,
-                onValueChange = { keyword = it },
+                onValueChange = { keyword = it }, //updates the keyword on value change
                 placeholder = { Text("eg: Batman") },
                 textStyle = TextStyle(fontSize = 18.sp),
                 shape = RoundedCornerShape(10.dp),
@@ -97,7 +97,7 @@ fun MovieSearchWindow(viewModel: MainViewModel){
             Spacer(Modifier.size(20.dp))
 
 
-            Button(modifier = Modifier
+            Button(modifier = Modifier //search bnt
                 .size(220.dp, 40.dp),
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -139,7 +139,7 @@ fun MovieSearchWindow(viewModel: MainViewModel){
         }
 
 
-        Box(
+        Box( //box to store add to database btn
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
@@ -160,13 +160,16 @@ fun MovieSearchWindow(viewModel: MainViewModel){
                 onClick = {
                     movie?.let {
                         coroutineScope.launch {
-                            viewModel.addtoDb(it)
+                            withContext(Dispatchers.IO) {
+                                viewModel.addtoDb(it)
+                            }
                             Toast.makeText(context, "Movie Added", Toast.LENGTH_SHORT).show()
                             movie = null
+
                         }
                     }
                 },
-                enabled = (movie != null)
+                enabled = (movie != null) //only show is a result is visible
             ) {
                 Text("Add this movie")
             }

@@ -15,13 +15,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.letter_movie_box.data.Movie
 import com.example.letter_movie_box.data.MovieDatabase
 import com.example.letter_movie_box.data.MovieRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -47,7 +45,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     }
 
 
-    suspend fun fetchMovie(context: Context, keyword:String): Movie? {
+    suspend fun fetchMovie(context: Context, keyword:String): Movie? { //function to search a single movie
         lateinit var fetchedMovie:Movie
         val encodedKeyword = withContext(Dispatchers.IO) {
             URLEncoder.encode(keyword, "UTF-8")
@@ -56,7 +54,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         val url = URL(urlString)
         val con: HttpURLConnection = withContext(Dispatchers.IO) {
             url.openConnection()
-        } as HttpURLConnection
+        } as HttpURLConnection   //establish the api connection
 
         val stb = StringBuilder()
 
@@ -65,16 +63,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
             var line: String? = bf.readLine()
             while (line != null){
                 stb.append(line + "\n")
-                line = bf.readLine()
+                line = bf.readLine() //get the response to a stringbuilder
             }
         }
         val stbToJson = JSONObject(stb.toString())
-        if (stbToJson.getString("Response").equals("True")){
+        if (stbToJson.getString("Response").equals("True")){ //convert to json, create a movie object if match found,
             fetchedMovie = parseToMovieSingle(stbToJson)
 
             return fetchedMovie
         }else{
-            Toast.makeText(context, "Zero Matches found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Zero Matches found", Toast.LENGTH_SHORT).show() //otherwise, send error toast
         }
         //Toast.makeText(context, "Got ${fetchedMovie.title}", Toast.LENGTH_SHORT).show()
         return null
@@ -97,7 +95,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         )
     }
 
-    suspend fun fetchMatchingMovies(context: Context, keyword:String): String {
+    suspend fun fetchMatchingMovies(context: Context, keyword:String): String { //function to get multiple matches
         val moviesList = ArrayList<Movie>()
         val encodedKeyword = withContext(Dispatchers.IO) {
             URLEncoder.encode(keyword, "UTF-8")
@@ -121,10 +119,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
         val stbToJson = JSONObject(stb.toString())
         if (stbToJson.getString("Response").equals("True")){
-            val searchArray = stbToJson.getJSONArray("Search")
+            val searchArray = stbToJson.getJSONArray("Search") //search results are stored in a json array with the key "search"
             for (i in 0 until searchArray.length()) {
                 val movieJson = searchArray.getJSONObject(i)
-                val movie = Movie(
+                val movie = Movie( //iterate through the list, get the basic details of each json object to a movie object and add to a movie array
                     imdbId = movieJson.getString("imdbID"),
                     title = movieJson.getString("Title"),
                     year = movieJson.getString("Year"),
@@ -139,7 +137,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
                 )
                 moviesList.add(movie)
             }
-            var returnString = ""
+            var returnString = "" //iterate through the movie list, get title and year, add to a string and send it
             moviesList.forEach { movie ->
                 returnString += movie.title+" ("+movie.year+") "+"\n"
             }
@@ -152,7 +150,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     }
 
 
-    @Composable
+    @Composable //box used in searchmovie and searchactor to display movies
     fun MovieCard(movie: Movie){
         Box(modifier = Modifier
             .padding(16.dp)

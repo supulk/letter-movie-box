@@ -4,21 +4,17 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -33,11 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.letter_movie_box.data.Movie
-import com.example.letter_movie_box.ui.theme.LettermovieboxTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,8 +52,8 @@ class SearchActor : ComponentActivity() {
 fun ActorSearchWindow(viewModel: MainViewModel){
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var keyword by rememberSaveable { mutableStateOf("") }
-    var movies by rememberSaveable { mutableStateOf<List<Movie>>(emptyList()) }
+    var keyword by rememberSaveable { mutableStateOf("") } //store search keyword
+    var movies by rememberSaveable { mutableStateOf<List<Movie>>(emptyList()) } //store results as a array
     var keywordUTF8 = URLEncoder.encode(keyword, "UTF-8")
     Column(
         modifier = Modifier
@@ -71,7 +65,7 @@ fun ActorSearchWindow(viewModel: MainViewModel){
     ) {
         Spacer(Modifier.size(120.dp))
 
-        TextField(
+        TextField( //search textfield
             value = keyword,
             onValueChange = { keyword = it },
             placeholder = { Text("eg: Tim Robbins ") },
@@ -86,7 +80,7 @@ fun ActorSearchWindow(viewModel: MainViewModel){
         Spacer(Modifier.size(20.dp))
 
 
-        Button(modifier = Modifier
+        Button(modifier = Modifier //search btn
             .size(220.dp, 40.dp),
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(
@@ -99,7 +93,7 @@ fun ActorSearchWindow(viewModel: MainViewModel){
                 if (keyword == ""){
                     Toast.makeText(context, "Value is required", Toast.LENGTH_SHORT).show()
                 }else{
-                    withContext(Dispatchers.IO) {
+                    withContext(Dispatchers.IO) { //execute in a threadpool optimized for input output actions
                         movies = viewModel.searchActor(keywordUTF8)
                     }
                 }
